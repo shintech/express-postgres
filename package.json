@@ -1,0 +1,26 @@
+{
+  "name": "express-postgres",
+  "version": "0.0.1",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "bluebird": "^3.5.2",
+    "body-parser": "^1.18.3",
+    "compression": "^1.7.3",
+    "elasticsearch": "^15.1.1",
+    "express": "^4.16.3",
+    "morgan": "^1.9.0",
+    "pg-promise": "^8.4.6",
+    "winston": "^3.1.0"
+  },
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "NODE_ENV=development nodemon server/index.js"
+  },
+  "standard": {
+    "globals": [
+      "React",
+      "FormData"
+    ]
+  }
+}
