@@ -8,7 +8,6 @@ const configDB = require('./db')
 
 const environment = process.env['NODE_ENV'] || 'development'
 const port = process.env['PORT'] || 8000
-const host = process.env['HOST'] || 'localhost'
 
 const logger = require('./logger')({ environment })
 
@@ -28,8 +27,8 @@ app.use('/public', express.static(path.join(__dirname, '../public')))
   .use(compression())
   .use('/api', configRouter({ db, logger }))
 
-app.listen(port, host, () => {
-  logger.info(`listening on ${host}:${port}...`)
+app.listen(port, () => {
+  logger.info(`listening on ${port}...`)
 })
 
 module.exports = app
