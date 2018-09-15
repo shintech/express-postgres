@@ -14,9 +14,7 @@ module.exports = ({ logger }) => {
   const init = pgp(connectionString)
   const databaseName = connectionString.split('/')
 
-  if (environment === 'development') {
-    logger.info(`Connected to database: ${databaseName[databaseName.length - 1]}...`)
-  }
+  logger.info(`Connected to database: ${databaseName[databaseName.length - 1]}...`)
 
   return init
 }

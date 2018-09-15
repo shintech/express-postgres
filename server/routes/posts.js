@@ -6,7 +6,7 @@ module.exports = function (config) {
   return {
     fetchAll: async (req, res) => {
       try {
-        query = await queryDB(config, req.db.any('SELECT * from posts'))
+        query = await queryDB(config, req.db.any('SELECT * from posts ORDER BY id DESC'))
       } catch (err) {
         query = err
       }
@@ -21,6 +21,18 @@ module.exports = function (config) {
 
       try {
         query = await queryDB(config, req.db.one('SELECT * FROM posts WHERE id = $1', itemId))
+      } catch (err) {
+        query = err
+      }
+
+      respond(res, query.status, query.response)
+    },
+
+    addOne: async (req, res) => {
+      let query
+
+      try {
+        query = await queryDB(config, req.db.one('insert into posts( title, short, body )' + 'values( ${title}, ${short}, ${body} ) returning id', req.body)) // eslint-disable-line
       } catch (err) {
         query = err
       }
