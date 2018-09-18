@@ -1,16 +1,15 @@
 const { respond, queryDB } = require('../lib')
 
-module.exports = function (config) {
+module.exports = function ({ db, logger }) {
   let query
 
   return {
     fetchAll: async (req, res) => {
       try {
-        query = await queryDB(config, req.db.any('SELECT * from posts ORDER BY id DESC'))
+        query = await queryDB({ logger, query: db.any('SELECT * from users ORDER BY id DESC') })
       } catch (err) {
         query = err
       }
-
       respond(res, query.status, query.response)
     },
 
@@ -20,7 +19,7 @@ module.exports = function (config) {
       let query
 
       try {
-        query = await queryDB(config, req.db.one('SELECT * FROM posts WHERE id = $1', itemId))
+        query = await queryDB({ logger, query: db.one('SELECT * FROM users WHERE id = $1', itemId) })
       } catch (err) {
         query = err
       }
@@ -32,7 +31,7 @@ module.exports = function (config) {
       let query
 
       try {
-        query = await queryDB(config, req.db.one('insert into posts( title, short, body )' + 'values( ${title}, ${short}, ${body} ) returning id', req.body)) // eslint-disable-line
+        query = await queryDB({ logger, query: db.one('insert into users( first_name, last_name, email, username, password )' + 'values( ${first_name}, ${last_name}, ${email}, ${username}, ${password} ) returning id', req.body) }) // eslint-disable-line
       } catch (err) {
         query = err
       }

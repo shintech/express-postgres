@@ -8,7 +8,7 @@ function respond (res, status, response) {
     })
 }
 
-async function queryDB ({ logger }, query) {
+async function queryDB ({ logger, query }) {
   return new Promise(async function (resolve, reject) {
     try {
       resolve({
