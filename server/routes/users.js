@@ -1,10 +1,10 @@
 const { respond, queryDB } = require('../lib')
 
 module.exports = function ({ db, logger }) {
-  let query
-
   return {
     fetchAll: async (req, res) => {
+      let query
+
       try {
         query = await queryDB({ logger, query: db.any('SELECT * from users ORDER BY id DESC') })
       } catch (err) {
