@@ -1,4 +1,5 @@
 const { respond, queryDB } = require('../lib')
+const bcrypt = require('bcryptjs')
 
 module.exports = function ({ db, logger }) {
   return {
@@ -29,9 +30,18 @@ module.exports = function ({ db, logger }) {
 
     addOne: async (req, res) => {
       let query
+      const encryptedPassword = bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(10), null)
+
+      const attrs = {
+        first_name: req.body.first_name,
+        last_name: req.body.last_name,
+        email: req.body.email,
+        username: req.body.username,
+        password: encryptedPassword
+      }
 
       try {
-        query = await queryDB({ logger, query: db.one('insert into users( first_name, last_name, email, username, password )' + 'values( ${first_name}, ${last_name}, ${email}, ${username}, ${password} ) returning id', req.body) }) // eslint-disable-line
+        query = await queryDB({ logger, query: db.one('insert into users( first_name, last_name, email, username, password )' + 'values( ${first_name}, ${last_name}, ${email}, ${username}, ${password} ) returning id', attrs) }) // eslint-disable-line
       } catch (err) {
         query = err
       }

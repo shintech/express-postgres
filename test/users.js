@@ -35,11 +35,13 @@ describe('USERS', function () {
       first_name: 'first_name',
       last_name: 'last_name',
       username: 'username',
-      password: 'password',
+      password: '$2a$10$z0yU2Lr73m/hz/FcrITgn.9s3vqpXmWJGvyfoG4wupvu03eylINQG',
       email: 'email@example.org'
     }
 
     db.one('insert into users( first_name, last_name, email, username, password )' + 'values( ${first_name}, ${last_name}, ${email}, ${username}, ${password} ) returning id', attrs) // eslint-disable-line
+
+    // "password" = $2a$10$z0yU2Lr73m/hz/FcrITgn.9s3vqpXmWJGvyfoG4wupvu03eylINQG
   })
 
   afterEach(done => {
