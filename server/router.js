@@ -9,5 +9,7 @@ module.exports = function (config) {
   router.route('/users/:id')
     .get(routes.users(config).fetchOne)
 
+  router.route('/authorize/:id')
+    .get(routes.users(config).authorize)
   return router
 }
