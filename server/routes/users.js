@@ -48,18 +48,18 @@ module.exports = function ({ db, logger }) {
 
       respond(res, query.status, query.response)
     },
-    
+
     authorize: async (req, res) => {
       const itemId = parseInt(req.params.id)
 
       let query
-      
+
       try {
         query = await queryDB({ logger, query: db.one('SELECT id, username, password FROM users WHERE id = $1', itemId) })
       } catch (err) {
         query = err
       }
-      console.log(query)
+
       respond(res, query.status, query.response)
     }
   }
