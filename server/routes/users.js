@@ -50,17 +50,31 @@ module.exports = function ({ db, logger }) {
     },
 
     authorize: async (req, res) => {
-      const itemId = parseInt(req.params.id)
-
       let query
 
       try {
-        query = await queryDB({ logger, query: db.one('SELECT id, username, password FROM users WHERE id = $1', itemId) })
+        query = await queryDB({ logger, query: db.one('SELECT id, username, password FROM users WHERE username = $1', req.body.username) })
+
+        let compareSync = bcrypt.compareSync(req.body.password, query.response.password)
+
+        query.response.authorized = !!(compareSync)
+
+        delete query.response.password
       } catch (err) {
-        query = err
+        query = {
+          response: {
+            authorized: false
+          },
+
+          status: 401
+        }
       }
 
       respond(res, query.status, query.response)
     }
   }
 }
+
+/*
+  password = $2a$10$oTHc103GQnIu.jvMN2XKA.o1oqv3SMK1pgm7Fl9aN96QUSVdkEe8a
+*/
