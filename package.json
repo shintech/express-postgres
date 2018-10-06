@@ -1,6 +1,6 @@
 {
   "name": "express-postgres",
-  "version": "0.0.9",
+  "version": "0.1.0",
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
@@ -16,7 +16,7 @@
   },
   "scripts": {
     "start": "node .",
-    "test": "NODE_ENV=test PORT=65000 mocha test --exit -t 10000",
+    "test": "NODE_ENV=test PORT=65000 mocha test --watch --exit -t 10000",
     "dev": "NODE_ENV=development PORT=65330 nodemon ."
   },
   "standard": {

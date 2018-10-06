@@ -14,8 +14,8 @@ chai.use(chaiHttp)
 const expect = chai.expect
 
 describe('INIT', () => {
-  before(function () {
-    db.none('TRUNCATE users RESTART IDENTITY')
+  before(async function () {
+    await db.none('TRUNCATE users RESTART IDENTITY')
   })
 
   it('should not contain data', done => {
@@ -30,23 +30,22 @@ describe('INIT', () => {
 })
 
 describe('USERS', function () {
-  beforeEach(function () {
+  beforeEach(async function () {
     const attrs = {
       first_name: 'first_name',
       last_name: 'last_name',
       username: 'username',
-      password: '$2a$10$z0yU2Lr73m/hz/FcrITgn.9s3vqpXmWJGvyfoG4wupvu03eylINQG',
+      password: '$2a$10$oTHc103GQnIu.jvMN2XKA.o1oqv3SMK1pgm7Fl9aN96QUSVdkEe8a',
       email: 'email@example.org'
     }
 
-    db.one('insert into users( first_name, last_name, email, username, password )' + 'values( ${first_name}, ${last_name}, ${email}, ${username}, ${password} ) returning id', attrs) // eslint-disable-line
+    await db.one('insert into users( first_name, last_name, email, username, password )' + 'values( ${first_name}, ${last_name}, ${email}, ${username}, ${password} ) returning id', attrs) // eslint-disable-line
 
     // "password" = $2a$10$z0yU2Lr73m/hz/FcrITgn.9s3vqpXmWJGvyfoG4wupvu03eylINQG
   })
 
-  afterEach(done => {
-    db.none('TRUNCATE users RESTART IDENTITY')
-    done()
+  afterEach(async () => {
+    await db.none('TRUNCATE users RESTART IDENTITY')
   })
 
   it('GET /api/users', done => {
@@ -63,6 +62,7 @@ describe('USERS', function () {
       .get('/api/users')
       .end(function (error, response) { // eslint-disable-line
         expect(error).to.be.null // eslint-disable-line
+        expect(response).to.have.status(200)
         chai.request(server)
           .get(`/api/users/${response.body[0].id}`)
           .end(function (err, res) {
@@ -88,6 +88,58 @@ describe('USERS', function () {
       .end(function (err, res) {
         expect(err).to.be.null // eslint-disable-line
         expect(res).to.have.status(200)
+        done()
+      })
+  })
+
+  it('POST /api/login/:id -> Expect authorization to succeed...', done => {
+    const attrs = {
+      username: 'username',
+      password: 'password'
+    }
+
+    chai.request(server)
+      .post('/api/login/1')
+      .send(attrs)
+      .end(function (err, res) {
+        expect(err).to.be.null  // eslint-disable-line
+        expect(res).to.have.status(200)
+        expect(res.body.authorized).to.be.true  // eslint-disable-line
+        done()
+      })
+  })
+
+  it('POST /api/login/:id -> Expect authorization to fail if no username is provided...', done => {
+    const attrs = {
+      username: '',
+      password: 'password'
+    }
+
+    chai.request(server)
+      .post('/api/login/1')
+      .send(attrs)
+      .end(function (err, res) {
+        expect(err).to.be.null  // eslint-disable-line
+        expect(res).to.have.status(401)
+        expect(res.body.error).to.equal('username was not provided')
+        expect(res.body.authorized).to.be.false  // eslint-disable-line
+        done()
+      })
+  })
+
+  it('POST /api/login/:id -> Expect authorization to fail with incorrect password...', done => {
+    const attrs = {
+      username: 'username',
+      password: 'incorrect'
+    }
+
+    chai.request(server)
+      .post('/api/login/1')
+      .send(attrs)
+      .end(function (err, res) {
+        expect(err).to.be.null // eslint-disable-line
+        expect(res).to.have.status(401)
+        expect(res.body.authorized).to.be.false // eslint-disable-line
         done()
       })
   })

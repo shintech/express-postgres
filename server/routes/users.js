@@ -1,4 +1,4 @@
-const { respond, queryDB } = require('../lib')
+const { respond, promisify } = require('../lib')
 const bcrypt = require('bcryptjs')
 
 module.exports = function ({ db, logger }) {
@@ -7,7 +7,7 @@ module.exports = function ({ db, logger }) {
       let query
 
       try {
-        query = await queryDB({ logger, query: db.any('SELECT * from users ORDER BY id DESC') })
+        query = await promisify({ logger, query: db.any('SELECT * from users ORDER BY id DESC') })
       } catch (err) {
         query = err
       }
@@ -20,7 +20,7 @@ module.exports = function ({ db, logger }) {
       let query
 
       try {
-        query = await queryDB({ logger, query: db.one('SELECT * FROM users WHERE id = $1', itemId) })
+        query = await promisify({ logger, query: db.one('SELECT * FROM users WHERE id = $1', [itemId]) })
       } catch (err) {
         query = err
       }
@@ -41,7 +41,7 @@ module.exports = function ({ db, logger }) {
       }
 
       try {
-        query = await queryDB({ logger, query: db.one('insert into users( first_name, last_name, email, username, password )' + 'values( ${first_name}, ${last_name}, ${email}, ${username}, ${password} ) returning id', attrs) }) // eslint-disable-line
+        query = await promisify({ logger, query: db.one('insert into users( first_name, last_name, email, username, password )' + 'values( ${first_name}, ${last_name}, ${email}, ${username}, ${password} ) returning id', attrs) }) // eslint-disable-line
       } catch (err) {
         query = err
       }
@@ -49,28 +49,25 @@ module.exports = function ({ db, logger }) {
       respond(res, query.status, query.response)
     },
 
-    authorize: async (req, res) => {
-      let query
+    login: async (req, res) => {
+      if (!req.body.username || req.body.username === '') { return respond(res, 401, { authorized: false, error: 'username was not provided' }) }
+
+      let response
 
       try {
-        query = await queryDB({ logger, query: db.one('SELECT id, username, password FROM users WHERE username = $1', req.body.username) })
+        let query = await promisify({ logger, query: db.one('SELECT id, username, password FROM users WHERE username = $1', [req.body.username]) })
 
-        let compareSync = bcrypt.compareSync(req.body.password, query.response.password)
-
-        query.response.authorized = !!(compareSync)
-
-        delete query.response.password
+        response = (bcrypt.compareSync(req.body.password, query.response.password)) ? { status: 200, authorized: true } : { status: 401, authorized: false }
       } catch (err) {
-        query = {
-          response: {
-            authorized: false
-          },
+        logger.error(err.message)
 
+        response = {
+          authorized: false,
           status: 401
         }
       }
 
-      respond(res, query.status, query.response)
+      respond(res, response.status, response)
     }
   }
 }

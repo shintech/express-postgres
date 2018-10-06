@@ -8,7 +8,7 @@ function respond (res, status, response) {
     })
 }
 
-async function queryDB ({ logger, query }) {
+async function promisify ({ logger, query }) {
   return new Promise(async function (resolve, reject) {
     try {
       resolve({
@@ -26,5 +26,5 @@ async function queryDB ({ logger, query }) {
 
 module.exports = {
   respond,
-  queryDB
+  promisify
 }
