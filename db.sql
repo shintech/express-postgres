@@ -14,7 +14,7 @@ CREATE TABLE users (
 );
 
 INSERT INTO users ( first_name, last_name, email, username, password )
-VALUES ('Kill', 'Bill', 'killbill@example.com', 'killbill', 'dbnjt3x9vj4brOcq0qyxyOmhw6XZJV3o5SdFDtDkFs4t1X4KhW46m');
+VALUES ('Kill', 'Bill', 'user@example.com', 'username', '$2a$10$oTHc103GQnIu.jvMN2XKA.o1oqv3SMK1pgm7Fl9aN96QUSVdkEe8a');
 
 CREATE TABLE accounts (
   ID SERIAL PRIMARY KEY,

@@ -1,8 +1,9 @@
-function respond (res, status, response) {
+function respond (res, status, body) {
   res.status(status)
     .format({
       json: () => {
-        res.write(JSON.stringify(response))
+        res.set({ 'Content-Type': 'application/json' })
+        res.write(JSON.stringify(body))
         res.end()
       }
     })

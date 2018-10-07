@@ -9,7 +9,7 @@ module.exports = function (config) {
   router.route('/users/:id')
     .get(routes.users(config).fetchOne)
 
-  router.route('/login/:id')
+  router.route('/users/:id/login')
     .post(routes.users(config).login)
 
   return router

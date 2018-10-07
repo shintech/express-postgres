@@ -50,24 +50,33 @@ module.exports = function ({ db, logger }) {
     },
 
     login: async (req, res) => {
-      if (!req.body.username || req.body.username === '') { return respond(res, 401, { authorized: false, error: 'username was not provided' }) }
+      let response = {
+        status: 500,
+        body: {}
+      }
 
-      let response
+      if (!req.body.username || req.body.username === '') { return respond(res, 401, { authorized: false }) }
 
       try {
         let query = await promisify({ logger, query: db.one('SELECT id, username, password FROM users WHERE username = $1', [req.body.username]) })
 
-        response = (bcrypt.compareSync(req.body.password, query.response.password)) ? { status: 200, authorized: true } : { status: 401, authorized: false }
+        if (!query.response.error) {
+          response = (bcrypt.compareSync(req.body.password, query.response.password)) ? { status: 200, body: { authorized: true } } : { status: 401, body: { authorized: false } }
+        } else {
+          response = { status: 401, body: { authorized: false } }
+        }
       } catch (err) {
         logger.error(err.message)
 
         response = {
-          authorized: false,
-          status: 401
+          status: 401,
+          body: {
+            authorized: false
+          }
         }
       }
 
-      respond(res, response.status, response)
+      respond(res, response.status, response.body)
     }
   }
 }
