@@ -92,14 +92,14 @@ describe('USERS', function () {
       })
   })
 
-  it('POST /api/users/:id/login -> Expect authorization to succeed...', done => {
+  it('POST /api/users/login -> Expect authorization to succeed...', done => {
     const attrs = {
       username: 'username',
       password: 'password'
     }
 
     chai.request(server)
-      .post('/api/users/1/login')
+      .post('/api/users/login')
       .send(attrs)
       .end(function (err, res) {
         expect(err).to.be.null  // eslint-disable-line
@@ -109,14 +109,14 @@ describe('USERS', function () {
       })
   })
 
-  it('POST /api/users/:id/login -> Expect authorization to fail if no username is provided...', done => {
+  it('POST /api/users/login -> Expect authorization to fail if no username is provided...', done => {
     const attrs = {
       username: '',
       password: 'password'
     }
 
     chai.request(server)
-      .post('/api/users/1/login')
+      .post('/api/users/login')
       .send(attrs)
       .end(function (err, res) {
         expect(err).to.be.null  // eslint-disable-line
@@ -126,14 +126,14 @@ describe('USERS', function () {
       })
   })
 
-  it('POST /api/users/:id/login -> Expect authorization to fail with incorrect password...', done => {
+  it('POST /api/users/login -> Expect authorization to fail with incorrect password...', done => {
     const attrs = {
       username: 'username',
       password: 'incorrect'
     }
 
     chai.request(server)
-      .post('/api/users/1/login')
+      .post('/api/users/login')
       .send(attrs)
       .end(function (err, res) {
         expect(err).to.be.null // eslint-disable-line
