@@ -3,7 +3,7 @@ const port = process.env['PORT'] || 8000
 const host = process.env['HOST'] || 'localhost'
 const configDB = require('./server/db')
 
-const logger = require('./server/logger')({ environment })
+const logger = require('shintech-logger')({ environment })
 const db = configDB({ logger, environment })
 const server = require('./server')({ db, logger, environment, port })
 const pkg = require('./package.json')

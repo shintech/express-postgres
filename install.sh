@@ -7,7 +7,7 @@ fi
 
 if [ ! -d "uploads" ]; then
   echo "Creating file directories..." && \
-  mkdir uploads
+  mkdir uploads log
 fi
 
 
