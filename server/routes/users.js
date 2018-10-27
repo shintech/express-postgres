@@ -1,9 +1,11 @@
 const { respond, promisify, generateWebToken } = require('../lib')
 const bcrypt = require('bcryptjs')
 
-module.exports = function ({ db, logger }) {
+module.exports = function () {
   return {
     fetchAll: async (req, res) => {
+      const { logger, db } = req
+
       let query
 
       try {
@@ -15,6 +17,8 @@ module.exports = function ({ db, logger }) {
     },
 
     fetchOne: async (req, res) => {
+      const { logger, db } = req
+
       const itemId = parseInt(req.params.id)
 
       let query
@@ -29,7 +33,10 @@ module.exports = function ({ db, logger }) {
     },
 
     addOne: async (req, res) => {
+      const { logger, db } = req
+
       let query
+
       const encryptedPassword = bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(10), null)
 
       const attrs = {
@@ -50,6 +57,8 @@ module.exports = function ({ db, logger }) {
     },
 
     login: async (req, res) => {
+      const { logger, db } = req
+
       let response = {
         status: 500,
         body: {}
