@@ -1,3 +1,5 @@
+const jwt = require('jsonwebtoken')
+
 function respond (res, status, body) {
   res.status(status)
     .format({
@@ -25,7 +27,18 @@ async function promisify ({ logger, query }) {
   })
 }
 
+function generateWebToken (user) {
+  let retval = {
+    username: user.username
+  }
+
+  return jwt.sign(retval, process.env.JWT_SECRET, {
+    expiresIn: 60 * 60 * 24
+  })
+}
+
 module.exports = {
   respond,
-  promisify
+  promisify,
+  generateWebToken
 }

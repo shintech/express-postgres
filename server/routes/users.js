@@ -1,4 +1,4 @@
-const { respond, promisify } = require('../lib')
+const { respond, promisify, generateWebToken } = require('../lib')
 const bcrypt = require('bcryptjs')
 
 module.exports = function ({ db, logger }) {
@@ -55,15 +55,15 @@ module.exports = function ({ db, logger }) {
         body: {}
       }
 
-      if (!req.body.username || req.body.username === '') { return respond(res, 401, { authorized: false }) }
+      if (!req.body.username || req.body.username === '') { return respond(res, 401, { token: false }) }
 
       try {
         let query = await promisify({ logger, query: db.one('SELECT id, username, password FROM users WHERE username = $1', [req.body.username]) })
 
         if (!query.response.error) {
-          response = (bcrypt.compareSync(req.body.password, query.response.password)) ? { status: 200, body: { authorized: true } } : { status: 401, body: { authorized: false } }
+          response = (bcrypt.compareSync(req.body.password, query.response.password)) ? { status: 200, body: { token: generateWebToken(query) } } : { status: 401, body: { token: false } }
         } else {
-          response = { status: 401, body: { authorized: false } }
+          response = { status: 401, body: { token: false } }
         }
       } catch (err) {
         logger.error(err.message)
@@ -71,7 +71,7 @@ module.exports = function ({ db, logger }) {
         response = {
           status: 401,
           body: {
-            authorized: false
+            token: false
           }
         }
       }

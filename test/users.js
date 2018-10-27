@@ -104,7 +104,8 @@ describe('USERS', function () {
       .end(function (err, res) {
         expect(err).to.be.null  // eslint-disable-line
         expect(res).to.have.status(200)
-        expect(res.body.authorized).to.be.true  // eslint-disable-line
+        expect(res.body).to.have.property('token')
+        // expect(res.body.token).to.equal("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE1NDA2MDk3NzAsImV4cCI6MTU0MDY5NjE3MH0.ldZROsf_JzmF51PRAZcwiHE5GSdblIkTWHoObUDfmaw")  // eslint-disable-line
         done()
       })
   })
@@ -121,7 +122,7 @@ describe('USERS', function () {
       .end(function (err, res) {
         expect(err).to.be.null  // eslint-disable-line
         expect(res).to.have.status(401)
-        expect(res.body.authorized).to.be.false  // eslint-disable-line
+        expect(res.body.token).to.be.false  // eslint-disable-line
         done()
       })
   })
@@ -138,7 +139,7 @@ describe('USERS', function () {
       .end(function (err, res) {
         expect(err).to.be.null // eslint-disable-line
         expect(res).to.have.status(401)
-        expect(res.body.authorized).to.be.false // eslint-disable-line
+        expect(res.body.token).to.be.false // eslint-disable-line
         done()
       })
   })
